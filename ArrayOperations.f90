@@ -63,7 +63,32 @@ module ArrayOperations
         end if
         
     end subroutine appendIntArray
-            
-            
+    
+    ! checks if an integer is in an array of integers
+    logical function intInArray(array, intgr)
+        implicit none
         
+        integer, dimension(:), allocatable, intent(in) :: array
+        integer, intent(in) :: intgr
+        integer :: i, n
+        
+        if (allocated(array)) then
+            n = size(array)
+            
+            do i = 1, n
+                if (array(i) == intgr) then
+                    intInArray = .TRUE.
+                    return
+                end if
+            end do
+        end if
+        
+        intInArray = .FALSE.
+        
+        return
+    end function intInArray
+    
+    ! unsets an array value
+    subroutine unset(array, i)
+    
 end module arrayOperations

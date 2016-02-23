@@ -3,13 +3,13 @@ all: growNetwork.exe
 testdebug:  test.f90 ArrayOperations.f90 ArrayOperations.o test.o
 	gfortran -g ArrayOperations.o test.o -o test.exe	
 
-growNetwork.exe: network.o growNetwork.o
-	gfortran network.o growNetwork.o -o growNetwork.exe
+growNetwork.exe: Network.o growNetwork.o
+	gfortran Network.o growNetwork.o -o growNetwork.exe
 	
-network.o: arrayOperations.o
-	gfortran -c network.f90
+Network.o: Network.f90 ArrayOperations.o
+	gfortran -c Network.f90
 	
-growNetwork.o: arrayOperations.o
+growNetwork.o: growNetwork.f90 ArrayOperations.o
 	gfortran -c growNetwork.f90
 		
 test: test.exe
