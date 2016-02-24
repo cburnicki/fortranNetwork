@@ -1,0 +1,10 @@
+test:
+	export FC="gfortran"
+	export FCFLAGS="-g"
+	export LDFLAGS="-g"
+	export CC="gpp"
+	export CXX="g++"
+	funit Network
+
+clean:
+	funit --clean
