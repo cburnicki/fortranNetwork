@@ -1,18 +1,21 @@
 program test
-    logical l
-    l = any((/.true., .true., .true./))
-    print *, l
-    call section
-    contains
-      subroutine section
-        integer a(6), b(6)
-        logical c(6)
-        a = (/1,2,1,3,2,4/)
-        b = 4
-        print *, b
-        c = a .eq. b
-        print *, c
-        d = pack(a, c)
-        print *, d
-      end subroutine section
+    implicit none
+    
+    integer, allocatable :: a(:), b(:)
+    logical, allocatable :: res(:)
+    
+    allocate(a(3))
+    allocate(b(3))
+    allocate(res(3))
+        
+    a = (/1,2,3/)
+    b = (/1,3,1/)
+    
+    res = a==b
+    
+    res = .not. res
+    
+    write(*,*) res    
+    
+
 end program test

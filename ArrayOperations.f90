@@ -88,7 +88,5 @@ module ArrayOperations
         return
     end function intInArray
     
-    ! unsets an array value
-    subroutine unset(array, i)
     
-end module arrayOperations
+end module ArrayOperations

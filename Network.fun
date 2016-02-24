@@ -1,0 +1,130 @@
+test_suite Network
+
+teardown
+    ! The test adds nodes from 1 to 4 which have then to be deleted
+    call deleteNode(1)
+    call deleteNode(2)
+    call deleteNode(3)
+    call deleteNode(4)
+end teardown
+
+test add_edge
+    integer :: nodes_set(4), edges_set(3,2), shape_set(2), final_shape(2)
+  
+    ! add some edges to the network
+    call addEdge(1, 2)
+    call addEdge(3, 4)
+    call addEdge(4, 3)
+    call addEdge(1, 2)
+    call addEdge(2, 2)
+    call addEdge(1, 0)
+    call addEdge(1, -2)
+    call addEdge(-1, 2)
+    call addEdge(0, 3)
+    
+    ! define expected results
+    nodes_set = (/1,2,3,4/)
+    edges_set = reshape((/1,3,4,2,4,3/),(/3,2/))
+
+    final_shape = shape(edges)
+    print*, final_shape
+    shape_set = shape(edges_set)
+    print*, shape_set
+
+    assert_array_equal(nodes,nodes_set)
+    assert_array_equal(edges,edges_set)
+    assert_array_equal(shape_set,final_shape)
+    
+end test
+
+test add_node
+    integer :: nodes_set(4)
+  
+    ! add some edges to the network
+    call addNode(-1)
+    call addNode(0)
+    call addNode(1)
+    call addNode(2)
+    call addNode(4)
+    call addNode(3)
+    call addNode(2)
+        
+    ! define expected results
+    nodes_set = (/1,2,4,3/)
+
+    assert_array_equal(nodes,nodes_set)
+    
+end test
+
+test delete_node
+    integer :: nodes_set(2)
+    
+    nodes_set = (/1,2/)
+    
+    call addNode(1)
+    call addNode(2)
+    
+    ! try to delete an unexisting node
+    call deleteNode(3)
+    
+    
+    assert_array_equal(nodes,nodes_set)
+    
+    ! try to delete more nodes
+    call deleteNode(1)
+    call deleteNode(2)
+    call deleteNode(2)
+    
+    
+    
+    assert_equal(size(nodes),0)
+    
+    ! If all nodes are deleted, all edges have to be deleted too
+    assert_equal(size(edges),0)
+    
+    
+    write(*,*) nodes
+end test
+
+test delete_edge
+
+    integer :: edges_set(3,2), array_shape(2), shape_set(2)
+    
+    call addEdge(1,2)
+    call addEdge(3,2)
+    call addEdge(1,4)
+    call addEdge(3,1)
+    
+    ! delete an existing edge and try to delete some none existing
+    call deleteEdge(0,1)
+    call deleteEdge(1,2)
+    call deleteEdge(2,1)
+    
+    edges_set = reshape((/3,1,3,2,4,1/),(/3,2/))
+    write(*,*) 'edges_set', edges_set
+    write(*,*) 'edges', edges
+    
+    assert_array_equal(edges,edges_set)
+    
+    array_shape = shape(edges)
+    shape_set = shape(edges_set)
+    
+    assert_array_equal(array_shape,shape_set)
+    
+    call deleteEdge(1,4)
+    call deleteEdge(3,2)
+    call deleteEdge(3,1)
+    
+    ! now all edges should be gone
+    assert_equal(size(edges),0)
+    
+    ! but the nodes should still be there
+    
+    assert_true(hasNode(1))
+    assert_true(hasNode(2))
+    assert_true(hasNode(3))
+    assert_true(hasNode(4))
+    
+end test
+
+end test_suite
