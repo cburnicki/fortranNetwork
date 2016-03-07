@@ -245,6 +245,127 @@ module Network
         call move_alloc(new_edges, edges)
         
     end subroutine deleteEdgesWithNode
+    
+    ! writes the networks edges to a file
+    subroutine exportEdges(filename)
+        implicit none
+        
+        character(len=200) :: filename
+        integer :: io_error, i, n
             
+        open(unit=20, file=filename, status='new',action='write', &
+        iostat=io_error)
+        
+        if(io_error /= 0) then
+            write(*,*) 'Error ', io_error, 'occured while trying to ', &
+                       'open file ', filename
+            return
+        end if
+        
+        n = size(edges, 1)
+        do i = 1, n
+            write(20,*) edges(i, 1), edges(i, 2)
+        end do
+        
+        close(20)
+        
+    end subroutine exportEdges
+        
+    ! writes the networks nodes to a file
+    subroutine exportNodes(filename)
+        implicit none
+        
+        character(len=200) :: filename
+        integer :: io_error, i, n
             
+        open(unit=20, file=filename, status='new',action='write', &
+        iostat=io_error)
+        
+        if(io_error /= 0) then
+            write(*,*) 'Error ', io_error, 'occured while trying to ', &
+                       'open file ', filename
+            return
+        end if
+        
+        n = size(nodes)
+        do i = 1, n
+            write(20,*) nodes(i)
+        end do
+        
+        close(20)
+        
+    end subroutine exportNodes
+    
+    ! Returns an array of nodes that have an incoming connection from 
+    ! node / that node has an outgoing connection to
+    function getOutgoingConnectionsOfNode(node) result(outgoing)
+        implicit none
+    
+        integer, intent(in) :: node
+        integer, allocatable, target :: outgoing(:)
+        integer :: n_edges, i, j, appearances
+        
+        if ( .not. isValidNode(node) ) then
+            return
+        end if
+        
+        if ( .not. hasNode(node) ) then
+            return
+        end if
+        
+        ! count appearances of node in first column of edges
+        appearances = count(edges(:,1) == node)
+        
+        ! allocate an array that holds outgoing connections
+        allocate(outgoing(appearances))
+        
+        ! j is the running index of the outgoing array
+        j = 1
+        
+        n_edges = size(edges, 1)
+        do i = 1, n_edges
+            if ( edges(i, 1) == node ) then
+                outgoing(j) = edges(i, 2)
+                j = j + 1
+            end if
+        end do
+        
+    end function getOutgoingConnectionsOfNode
+    
+    ! Returns an array of nodes that have an outgoing connection to
+    ! node / that node has an incoming connection from
+    function getIncomingConnectionsOfNode(node) result(incoming)
+        implicit none
+    
+        integer, intent(in) :: node
+        integer, allocatable, target :: incoming(:)
+        integer :: n_edges, i, j, appearances
+        
+        if ( .not. isValidNode(node) ) then
+            return
+        end if
+        
+        if ( .not. hasNode(node) ) then
+            return
+        end if
+        
+        ! count appearances of node in second column of edges
+        appearances = count(edges(:,2) == node)
+        
+        ! allocate an array that holds incoming connections
+        allocate(incoming(appearances))
+        
+        ! j is the running index of the outgoing array
+        j = 1
+        
+        n_edges = size(edges, 1)
+        do i = 1, n_edges
+            if ( edges(i, 2) == node ) then
+                incoming(j) = edges(i, 1)
+                j = j + 1
+            end if
+        end do
+                                
+    end function getIncomingConnectionsOfNode
+        
 end module Network
