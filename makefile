@@ -1,14 +1,18 @@
-all: growNetwork.exe
+anim: all
+	./growNetworkExample.exe
+	python networkAnimation.py
 
-growNetwork.exe: Network.o growNetwork.o ArrayOperations.o ErrorHandler.o
-	gfortran -g Network.o growNetwork.o ArrayOperations.o ErrorHandler.o -o growNetwork.exe
-	
+all: growNetworkExample.exe
+
+growNetworkExample.exe: Network.o growNetworkExample.o ArrayOperations.o ErrorHandler.o
+	gfortran -g Network.o growNetworkExample.o ArrayOperations.o ErrorHandler.o -o growNetworkExample.exe
+
 Network.o: Network.f03 ArrayOperations.o ErrorHandler.o
 	gfortran -g -Wall -c Network.f03
-	
-growNetwork.o: growNetwork.f03
-	gfortran -g -Wall -c growNetwork.f03
-	
+
+growNetworkExample.o: growNetworkExample.f03
+	gfortran -g -Wall -c growNetworkExample.f03
+
 ErrorHandler.o: ErrorHandler.f03
 	gfortran -g -Wall -c ErrorHandler.f03
 
@@ -18,9 +22,9 @@ ArrayOperations.o: ArrayOperations.f03
 clean:
 	rm *o *.exe
 	funit --clean
-	
+
 test:
 	make -f maketest
-	
+
 testclean: all
 	funit --clean

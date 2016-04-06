@@ -250,11 +250,20 @@ module Network
     subroutine exportEdges(filename)
         implicit none
         
-        character(len=200) :: filename
+        character(len=*) :: filename
         integer :: io_error, i, n
+        logical :: fileExists
+        
+        inquire(file=filename, exist=fileExists)
             
-        open(unit=20, file=filename, status='new',action='write', &
-        iostat=io_error)
+        if (fileExists) then
+            open(unit=20, file=filename, status='old',action='write', &
+                iostat=io_error)
+        else
+            open(unit=20, file=filename, status='new',action='write', &
+                iostat=io_error)
+        end if
+            
         
         if(io_error /= 0) then
             write(*,*) 'Error ', io_error, 'occured while trying to ', &
